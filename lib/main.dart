@@ -1,76 +1,39 @@
 import 'package:flutter/material.dart';
+import 'models/journal_entry.dart';
+import 'services/api_service.dart';
+import 'ui/entry_list_screen.dart';
+import 'ui/add_entry_screen.dart';
+import 'ui/entry_detail_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const GeoJournalApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+final ApiService apiService = ApiService();
 
-  // This widget is the root of your application.
+class GeoJournalApp extends StatelessWidget {
+  const GeoJournalApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Geo Journal',
       theme: ThemeData(
-        
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Geo Journal'),
-    );
-  }
-}
+      initialRoute: '/',
+      routes: {
+        '/': (context) => EntryListScreen(apiService: apiService),
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+        '/add': (context) => AddEntryScreen(apiService: apiService),
 
- 
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-  
-    return Scaffold(
-      appBar: AppBar(
-        
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        
-        title: Text(widget.title),
-      ),
-      body: Center(
-        
-        child: Column(
-          
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+        '/detail': (context) {
+          final entry =
+              ModalRoute.of(context)!.settings.arguments as JournalEntry;
+          return EntryDetailScreen(entry: entry);
+        },
+      },
     );
   }
 }
